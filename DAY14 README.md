@@ -1,379 +1,376 @@
-## 1. UNION
+## 1. COUNT()
 
-**Definition:** `UNION` combines the results of two or more `SELECT` queries and removes duplicate rows.
+**Definition:** `COUNT()` counts records or values in SQL.
+
+There are three common ways to use it.
+
+**A. COUNT(*) — Count all rows**
+
+```sql
+SELECT COUNT(*) AS total_employees
+FROM employees;
+```
+
+This counts all rows in the Employees table, including rows where some columns contain `NULL`.
+
+**B. COUNT(column_name) — Count non-NULL values**
+
+```sql
+SELECT COUNT(salary) AS employees_with_salary
+FROM employees;
+```
+
+This counts employees whose Salary value is not `NULL`.
+
+**C. COUNT(DISTINCT column_name) — Count unique non-NULL values**
+
+```sql
+SELECT COUNT(DISTINCT department)
+FROM employees;
+```
+
+This counts the number of distinct departments represented by non-NULL Department values.
+
+**Business application:** Counting employees, customers, orders, completed transactions, or unique product categories.
+
+**Remember:** `COUNT(*)` counts rows, while `COUNT(column_name)` ignores `NULL` values in that column.
+
+## 2. SUM()
+
+**Definition:** `SUM()` calculates the total of numeric values in a column.
 
 **Syntax:**
 
 ```sql
-SELECT column_name FROM table1
-UNION
-SELECT column_name FROM table2;
+SELECT SUM(column_name)
+FROM table_name;
 ```
 
-**Example:**
-
-Suppose a company stores current customers and previous customers in separate tables.
+**Example — Calculate total sales revenue:**
 
 ```sql
-SELECT email
-FROM current_customers
-
-UNION
-
-SELECT email
-FROM previous_customers;
+SELECT SUM(revenue) AS total_revenue
+FROM sales;
 ```
 
-**What happens?**
-- Emails from both tables are combined.
-- Duplicate email values are removed.
-- The result contains unique email values.
+This adds the revenue values from the Sales table.
 
-**Rules of UNION:**
-- Both queries must return the same number of columns.
-- Corresponding columns must have compatible data types.
-- Column names in the final result generally come from the first query.
-- `UNION` removes duplicate result rows.
-
-**Business application:** Combining customer lists from different branches without repeating identical records.
-
-## 2. UNION ALL
-
-**Definition:** `UNION ALL` combines the results of multiple `SELECT` queries and keeps duplicate rows.
-
-**Syntax:**
+**Example — Calculate total salary expense:**
 
 ```sql
-SELECT column_name FROM table1
-UNION ALL
-SELECT column_name FROM table2;
+SELECT SUM(salary) AS total_salary_expense
+FROM employees;
 ```
 
-**Example:**
+**Business application:**
+- Total sales revenue.
+- Total salary expense.
+- Total product costs.
+- Total monthly expenses.
+
+**Remember:** `SUM()` ignores `NULL` values. If there are no non-NULL values to add, it returns `NULL`.
+
+## 3. AVG()
+
+**Definition:** `AVG()` calculates the average of numeric values.
+
+**Formula:**
+
+`Average = Sum of values / Number of non-NULL values`
+
+**Example — Calculate average salary:**
 
 ```sql
-SELECT employee_name
-FROM employees_2025
-
-UNION ALL
-
-SELECT employee_name
-FROM employees_2026;
+SELECT AVG(salary) AS average_salary
+FROM employees;
 ```
 
-This combines employee names from both tables, including duplicates.
-
-**Difference between UNION and UNION ALL:**
-
-- `UNION` removes duplicate result rows.
-- `UNION ALL` keeps all result rows, including duplicates.
-- `UNION ALL` is generally faster because it does not need to eliminate duplicates.
-
-**Business application:** Combining monthly sales records when every transaction must be retained.
-
-**Remember:** Use `UNION` for unique results and `UNION ALL` when you need all records.
-
-## 3. Subqueries
-
-**Definition:** A subquery is a query written inside another SQL query.
-
-A subquery is also called an inner query or nested query.
-
-**Example business question:** Find employees whose salaries are greater than the company's average salary.
+**Example — Calculate average order value:**
 
 ```sql
-SELECT employee_name, salary
+SELECT AVG(order_amount) AS average_order_value
+FROM orders;
+```
+
+**Business application:**
+- Average employee salary.
+- Average customer spending.
+- Average order value.
+- Average delivery time.
+
+**Important:** `AVG()` ignores `NULL` values. The average is calculated using only non-NULL numeric values.
+
+## 4. MIN()
+
+**Definition:** `MIN()` returns the smallest value in a column.
+
+**Example — Find the lowest salary:**
+
+```sql
+SELECT MIN(salary) AS lowest_salary
+FROM employees;
+```
+
+**Example — Find the lowest product price:**
+
+```sql
+SELECT MIN(price) AS lowest_price
+FROM products;
+```
+
+`MIN()` can also work with dates and text, using the database's ordering rules.
+
+**Business application:** Finding the lowest salary, cheapest product, earliest order date, or shortest delivery time.
+
+## 5. MAX()
+
+**Definition:** `MAX()` returns the largest value in a column.
+
+**Example — Find the highest salary:**
+
+```sql
+SELECT MAX(salary) AS highest_salary
+FROM employees;
+```
+
+**Example — Find the highest sales revenue:**
+
+```sql
+SELECT MAX(revenue) AS highest_revenue
+FROM sales;
+```
+
+**Business application:** Finding the highest salary, most expensive product, latest order date, or largest transaction.
+
+**Remember:** `MIN()` finds the smallest value; `MAX()` finds the largest value. Both ignore `NULL` values.
+
+## 6. GROUP BY
+
+**Definition:** `GROUP BY` groups rows that have the same value in one or more columns so that aggregate functions can calculate a result for each group.
+
+**Example — Calculate total salary by department:**
+
+```sql
+SELECT department,
+       SUM(salary) AS total_salary
 FROM employees
-WHERE salary > (
-    SELECT AVG(salary)
-    FROM employees
-);
+GROUP BY department;
 ```
 
 **How it works:**
 
-1. The inner query calculates the average salary.
-2. The outer query retrieves employees earning more than that average.
+1. SQL groups employees with the same department.
+2. `SUM(salary)` adds the salaries within each group.
+3. The result contains one row per department group.
 
-Suppose the average salary is ₹35,000. The outer query returns employees whose salaries exceed ₹35,000.
-
-**Common types of subqueries:**
-
-- **Scalar subquery:** Returns a single value, such as an average salary.
-- **Single-row subquery:** Returns one row.
-- **Multiple-row subquery:** Returns multiple rows, often used with `IN`, `ANY`, or `ALL`.
-- **Correlated subquery:** Refers to a column from the outer query.
-
-**Example using IN:**
-
-Find employees who work in departments located in Indore.
+**Example — Count employees in each department:**
 
 ```sql
-SELECT employee_name, department_id
+SELECT department,
+       COUNT(*) AS employee_count
 FROM employees
-WHERE department_id IN (
-    SELECT department_id
-    FROM departments
-    WHERE location = 'Indore'
-);
+GROUP BY department;
 ```
 
-The inner query finds department IDs for Indore. The outer query retrieves employees belonging to those departments.
-
-**Business application:** Finding employees above average salary, customers who placed orders, or products priced above the average price.
-
-## 4. Correlated Subquery Concept
-
-**Definition:** A correlated subquery is an inner query that depends on a value from the outer query.
-
-Unlike a simple subquery, its result depends on the current row being examined by the outer query.
-
-**Example business question:** Find employees who earn more than the average salary of their own department.
+**Example — Calculate average salary by department:**
 
 ```sql
-SELECT e.employee_name,
-       e.department_id,
-       e.salary
-FROM employees e
-WHERE e.salary > (
-    SELECT AVG(e2.salary)
-    FROM employees e2
-    WHERE e2.department_id = e.department_id
-);
+SELECT department,
+       AVG(salary) AS average_salary
+FROM employees
+GROUP BY department;
+```
+
+**Example — Calculate revenue by region:**
+
+```sql
+SELECT region,
+       SUM(revenue) AS total_revenue
+FROM sales
+GROUP BY region;
+```
+
+**Business application:** Analyzing revenue by region, employee count by department, or orders by customer.
+
+**Important rule:** In a grouped query, a selected column generally needs to be included in `GROUP BY` or used inside an aggregate function, subject to the database's rules.
+
+## 7. HAVING
+
+**Definition:** `HAVING` filters groups after `GROUP BY` has grouped the records and calculated aggregate results.
+
+**Example — Find departments with more than 10 employees:**
+
+```sql
+SELECT department,
+       COUNT(*) AS employee_count
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 10;
+```
+
+Only departments with more than 10 employee records appear in the result.
+
+**Example — Find regions with revenue above ₹1,00,000:**
+
+```sql
+SELECT region,
+       SUM(revenue) AS total_revenue
+FROM sales
+GROUP BY region
+HAVING SUM(revenue) > 100000;
+```
+
+**Difference between WHERE and HAVING:**
+
+- `WHERE` filters individual rows before grouping.
+- `HAVING` filters groups after grouping.
+
+**Example using both:**
+
+```sql
+SELECT department,
+       AVG(salary) AS average_salary
+FROM employees
+WHERE salary > 0
+GROUP BY department
+HAVING AVG(salary) > 30000;
+```
+
+This query:
+1. Keeps employee records with a salary greater than zero.
+2. Groups the remaining employees by department.
+3. Calculates each department's average salary.
+4. Returns departments whose average salary exceeds ₹30,000.
+
+**Business application:** Finding regions with high revenue, departments with many employees, or customers with large total purchases.
+
+## 8. CASE
+
+**Definition:** `CASE` adds conditional logic to a SQL query. It works like an IF-ELSE statement in programming or Excel.
+
+**Basic syntax:**
+
+```sql
+SELECT column_name,
+       CASE
+           WHEN condition1 THEN result1
+           WHEN condition2 THEN result2
+           ELSE default_result
+       END AS new_column
+FROM table_name;
+```
+
+**Example — Classify employees by salary:**
+
+```sql
+SELECT employee_name,
+       salary,
+       CASE
+           WHEN salary >= 50000 THEN 'High Salary'
+           WHEN salary >= 30000 THEN 'Medium Salary'
+           ELSE 'Low Salary'
+       END AS salary_category
+FROM employees;
 ```
 
 **How it works:**
+- Salary of ₹50,000 or more → High Salary.
+- Salary of ₹30,000 to less than ₹50,000 → Medium Salary.
+- Salary below ₹30,000 → Low Salary.
 
-1. The outer query examines an employee.
-2. The inner query calculates the average salary for that employee's department.
-3. The employee's salary is compared with that departmental average.
-4. Employees earning more than their department average are returned.
+SQL checks the `WHEN` conditions in order and returns the result for the first condition that is true.
 
-**Simple example:**
-
-If the average salary in Sales is ₹30,000, a Sales employee earning ₹40,000 qualifies. An employee earning ₹25,000 does not qualify.
-
-The average is recalculated logically for each department represented in the outer query.
-
-**Important:** A correlated subquery is not necessarily executed from scratch for every row; the database optimizer may transform or optimize it.
-
-**Business application:** Identifying employees earning above their department average or products priced above the average for their category.
-
-## 5. CTE — Common Table Expression
-
-**Definition:** A CTE is a temporary named result set defined using `WITH`. It can be referenced by the main query that follows it.
-
-A CTE helps make complex SQL queries easier to read and organize.
-
-**Syntax:**
+**Example — Classify sales performance:**
 
 ```sql
-WITH cte_name AS (
-    SELECT column_name
-    FROM table_name
-)
-SELECT *
-FROM cte_name;
+SELECT salesperson_id,
+       revenue,
+       CASE
+           WHEN revenue >= 100000 THEN 'Excellent'
+           WHEN revenue >= 50000 THEN 'Good'
+           ELSE 'Needs Improvement'
+       END AS performance
+FROM sales;
 ```
 
-**Example business question:** Find employees whose salaries are above the average salary.
+**Business application:** Creating salary categories, sales performance labels, customer segments, or order status categories.
+
+### CASE with GROUP BY
+
+You can use `CASE` inside aggregate functions to calculate conditional totals.
+
+**Example — Count employees by salary category:**
 
 ```sql
-WITH average_salary AS (
-    SELECT AVG(salary) AS avg_salary
-    FROM employees
-)
-SELECT employee_name, salary
+SELECT
+    SUM(CASE
+        WHEN salary >= 50000 THEN 1
+        ELSE 0
+    END) AS high_salary_count
+FROM employees;
+```
+
+This counts employees earning at least ₹50,000.
+
+**Example — Count won deals:**
+
+Assume the Sales table contains a `status` column.
+
+```sql
+SELECT
+    SUM(CASE
+        WHEN status = 'Won' THEN 1
+        ELSE 0
+    END) AS won_deals
+FROM sales;
+```
+
+This counts the records whose status is Won.
+
+## 9. Combined Business Analysis Example
+
+**Business question:** Find departments that have more than five employees and an average salary above ₹30,000, and classify their average salary.
+
+```sql
+SELECT
+    department,
+    COUNT(*) AS employee_count,
+    AVG(salary) AS average_salary,
+    SUM(salary) AS total_salary,
+    CASE
+        WHEN AVG(salary) >= 50000 THEN 'High'
+        WHEN AVG(salary) >= 30000 THEN 'Medium'
+        ELSE 'Low'
+    END AS salary_level
 FROM employees
-WHERE salary > (
-    SELECT avg_salary
-    FROM average_salary
-);
+GROUP BY department
+HAVING COUNT(*) > 5
+   AND AVG(salary) > 30000;
 ```
 
-**How it works:**
+**How this query works:**
 
-1. `WITH average_salary AS (...)` defines the CTE.
-2. The CTE calculates the average salary.
-3. The main query uses that calculated value to find employees earning above average.
+1. `FROM employees` selects the source data.
+2. `GROUP BY department` groups employees by department.
+3. `COUNT(*)` counts employees in each department.
+4. `AVG(salary)` calculates the average salary.
+5. `SUM(salary)` calculates total salary expense.
+6. `CASE` classifies the average salary.
+7. `HAVING` keeps only departments with more than five employees and an average salary above ₹30,000.
 
-**Why use a CTE?**
-- Makes queries easier to understand.
-- Separates calculations from the main query.
-- Helps organize complex analysis into logical steps.
-- Can be referenced multiple times within the statement.
-
-**Important:** A normal CTE is available only to the single SQL statement immediately following its definition. It is not automatically a permanent table or a stored result.
-
-**Business application:** Calculating monthly revenue, identifying top-performing employees, and preparing reports.
-
-## 6. Multiple CTEs
-
-**Definition:** Multiple CTEs means defining two or more CTEs in the same `WITH` clause.
-
-This is useful when a business problem requires several calculation steps.
-
-**Example business question:** Find departments whose total salary expense is greater than the company's average departmental salary expense.
-
-```sql
-WITH department_salary AS (
-    SELECT department_id,
-           SUM(salary) AS total_salary
-    FROM employees
-    GROUP BY department_id
-),
-average_department_salary AS (
-    SELECT AVG(total_salary) AS avg_salary
-    FROM department_salary
-)
-SELECT ds.department_id,
-       ds.total_salary
-FROM department_salary ds
-CROSS JOIN average_department_salary ads
-WHERE ds.total_salary > ads.avg_salary;
-```
-
-**How it works:**
-
-**First CTE — `department_salary`**
-- Groups employees by department.
-- Calculates total salary expense for each department.
-
-**Second CTE — `average_department_salary`**
-- Calculates the average of those departmental totals.
-- Uses the first CTE as its input.
-
-**Final query**
-- Compares each department's total salary expense with the average departmental total.
-- Returns departments above that average.
-
-**Why use multiple CTEs?**
-
-Instead of writing one long and difficult query, you divide the problem into smaller steps.
-
-**Business application:** Sales performance analysis, departmental cost analysis, customer segmentation, and monthly KPI reporting.
-
-## 7. Business Analysis Problems
-
-SQL becomes useful when you use it to answer real business questions.
-
-### Problem 1 — Find employees earning above average
-
-**Business question:** Which employees earn more than the company's average salary?
-
-```sql
-SELECT employee_name, salary
-FROM employees
-WHERE salary > (
-    SELECT AVG(salary)
-    FROM employees
-);
-```
-
-**Insight:** Identifies employees earning above the overall company average.
-
-### Problem 2 — Find employees earning above their department average
-
-**Business question:** Which employees earn more than the average salary of their own department?
-
-```sql
-SELECT e.employee_name,
-       e.department_id,
-       e.salary
-FROM employees e
-WHERE e.salary > (
-    SELECT AVG(e2.salary)
-    FROM employees e2
-    WHERE e2.department_id = e.department_id
-);
-```
-
-**Insight:** Compares employees fairly within their own departments.
-
-### Problem 3 — Combine sales from two years
-
-**Business question:** Combine all sales transactions from 2025 and 2026.
-
-```sql
-SELECT order_id, revenue
-FROM sales_2025
-
-UNION ALL
-
-SELECT order_id, revenue
-FROM sales_2026;
-```
-
-**Insight:** Combines transaction records while preserving duplicate rows.
-
-Use `UNION ALL` when every transaction needs to be retained. Ensure the selected columns have compatible meanings and data types.
-
-### Problem 4 — Find customers who placed orders
-
-**Business question:** Which customers have placed at least one order?
-
-```sql
-SELECT customer_id, customer_name
-FROM customers
-WHERE customer_id IN (
-    SELECT customer_id
-    FROM orders
-);
-```
-
-**Insight:** Identifies customers who have made a purchase.
-
-### Problem 5 — Find departments with high salary expenses
-
-**Business question:** Which departments spend more on salaries than the average departmental total?
-
-```sql
-WITH department_salary AS (
-    SELECT department_id,
-           SUM(salary) AS total_salary
-    FROM employees
-    GROUP BY department_id
-)
-SELECT department_id, total_salary
-FROM department_salary
-WHERE total_salary > (
-    SELECT AVG(total_salary)
-    FROM department_salary
-);
-```
-
-**Insight:** Highlights departments with higher-than-average total salary costs.
-
-### Problem 6 — Find products priced above their category average
-
-**Business question:** Which products cost more than the average price of products in the same category?
-
-Assume the `products` table contains `product_name`, `category_id`, and `price`.
-
-```sql
-SELECT p.product_name,
-       p.category_id,
-       p.price
-FROM products p
-WHERE p.price > (
-    SELECT AVG(p2.price)
-    FROM products p2
-    WHERE p2.category_id = p.category_id
-);
-```
-
-**Insight:** Identifies relatively expensive products within each category.
+**Business insight:** This query helps compare departmental headcount, salary expense, and average salary level.
 
 ## Quick Revision
 
-- **UNION:** Combines query results and removes duplicate result rows.
-- **UNION ALL:** Combines query results and retains duplicate rows.
-- **Subquery:** A query inside another query.
-- **Correlated subquery:** An inner query that references a value from the outer query.
-- **CTE:** A named query result defined using `WITH`.
-- **Multiple CTEs:** Several named query results organized in one statement.
-- **Business analysis:** Using SQL to answer business questions and support decisions.
+- **COUNT():** Counts rows or non-NULL values, depending on its form.
+- **SUM():** Calculates the total of numeric values.
+- **AVG():** Calculates the average of non-NULL numeric values.
+- **MIN():** Returns the smallest value.
+- **MAX():** Returns the largest value.
+- **GROUP BY:** Groups records to calculate aggregate results.
+- **HAVING:** Filters groups based on conditions.
+- **CASE:** Applies conditional logic and creates categories.
 
-## Day 14 Learning Objective
+## Day 15 Learning Objective
 
-By the end of this lesson, you should be able to combine results from multiple queries, write simple and correlated subqueries, organize SQL using one or more CTEs, and solve practical business problems involving salaries, sales, customers, and products.
+By the end of this lesson, you should be able to calculate totals and averages, count records, find minimum and maximum values, summarize data by groups, filter grouped results, and create business categories using SQL.

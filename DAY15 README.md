@@ -1,4 +1,4 @@
-DAY 15 
+## DAY 15 
 
 ## 1. String Functions
 
@@ -489,6 +489,6 @@ This helps identify customer records that need updating.
 - **Conditional logic:** Produces results based on conditions, commonly using `CASE`.
 - **Business calculations:** Turn raw records into metrics such as revenue, average order value, win rate, and delivery time.
 
-## Day 16 Learning Objective
+## Day 15 Learning Objective
 
 By the end of this lesson, you should be able to clean text, work with dates, identify missing values, use `COALESCE()`, apply conditional logic, and calculate practical business metrics using SQL.

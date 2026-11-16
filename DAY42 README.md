@@ -230,3 +230,293 @@ It converts raw student records into meaningful academic information, helping te
 **Output Format:** Excel
 
 
+# NUMPY & PANDAS
+
+# Python & Pandas for Data Analytics
+
+## 1. Project Overview
+
+This repository contains my practical learning and hands-on exercises in **Python, NumPy, and Pandas**, focused on developing data analysis skills.
+
+The repository covers numerical operations using NumPy, data manipulation using Pandas, data cleaning, handling missing values, grouping and aggregation, merging datasets, working with dates, processing JSON files, and generating Excel reports.
+
+The main objective is to understand how Python can be used to clean, transform, analyze, and organize raw datasets into meaningful information.
+
+## 2. Tools & Technologies
+
+- **Programming Language:** Python
+- **Libraries:** NumPy, Pandas
+- **File Formats:** CSV, JSON, Excel
+- **Development Environment:** VS Code
+- **Reporting:** Excel using Pandas ExcelWriter
+
+## 3. Topics Covered
+
+### Part 1 – NumPy Fundamentals
+
+- Creating NumPy arrays
+- One-dimensional and multidimensional arrays
+- Array dimensions using `ndim`
+- Array shape using `shape`
+- Array size using `size`
+- Array indexing and slicing
+- Reshaping arrays
+- Accessing elements from multidimensional arrays
+- Vectorized mathematical operations
+- Statistical operations:
+  - Sum
+  - Mean
+  - Median
+  - Maximum
+  - Minimum
+- Axis-based calculations
+- Percentile calculations
+- Conditional array operations
+
+### Part 2 – Pandas Fundamentals
+
+- Creating Pandas Series and DataFrames
+- Reading CSV files
+- Reading Excel files
+- Inspecting datasets
+- `head()` and `tail()`
+- `info()` and `describe()`
+- `shape` and `columns`
+- Selecting rows and columns
+- `loc` and `iloc`
+- Filtering records
+- Sorting data
+- Renaming columns
+- Identifying duplicate records
+
+### Part 3 – Data Cleaning
+
+- Identifying missing values
+- `isnull()`
+- `dropna()`
+- `fillna()`
+- Filling missing values using the mean
+- Removing duplicate records
+- Data type conversion
+- Handling inconsistent data
+
+### Part 4 – Grouping and Aggregation
+
+- `groupby()`
+- Grouping by single columns
+- Grouping by multiple columns
+- `sum()`
+- `mean()`
+- `min()`
+- `max()`
+- `count()`
+- `agg()`
+- Sorting grouped results
+- Creating department-wise summaries
+- Calculating revenue per employee
+
+### Part 5 – Data Manipulation
+
+- Combining DataFrames
+- `merge()`
+- Inner merge
+- Left merge
+- Right merge
+- Outer merge
+- `join()`
+- `concat()`
+- Row-wise concatenation
+- Column-wise concatenation
+- Understanding Pivot and Melt concepts
+
+### Part 6 – Working with Values and Creating Features
+
+- Using `apply()`
+- Creating custom functions
+- Creating salary categories
+- Using `groupby().transform()`
+- Calculating department average salary
+- Creating annual salary
+- Calculating bonuses
+- Creating department salary cost
+- Calculating profit
+- Calculating profit margin
+- Creating new columns from existing data
+
+### Part 7 – Date and Time Analysis
+
+- Converting strings into datetime
+- `pd.to_datetime()`
+- Extracting year and month
+- Extracting month names
+- Extracting day names
+- Filtering records by date ranges
+- Calculating delivery days
+
+### Part 8 – File Handling and Reporting
+
+- Reading CSV files
+- Exporting cleaned datasets to CSV
+- Reading JSON files
+- Converting JSON into DataFrames
+- Exporting DataFrames to JSON
+- Reading and writing Excel files
+- Creating Excel workbooks using `ExcelWriter`
+- Exporting multiple DataFrames into separate worksheets
+- Generating business reports
+
+## 4. Practical Exercises
+
+The repository includes hands-on exercises such as:
+
+**NumPy Exercises**
+- Sales calculations using arrays.
+- Salary increment calculations.
+- Array indexing and reshaping.
+- Statistical analysis of numerical data.
+- Percentile calculations.
+
+**Pandas Exercises**
+- Employee salary analysis.
+- Department-wise revenue analysis.
+- Missing-value handling.
+- Duplicate record identification.
+- Employee and sales DataFrame merging.
+- Revenue per employee calculations.
+- Date-based sales filtering.
+- Creating new analytical columns.
+
+**Reporting Exercises**
+- Exporting employee data to CSV.
+- Creating JSON files from DataFrames.
+- Generating Excel reports with multiple worksheets.
+- Creating business analysis reports.
+
+## 5. Sample Business Analysis
+
+One of the practical exercises uses employee and sales datasets.
+
+The analysis includes:
+
+- Employee salary analysis.
+- Department-wise revenue calculation.
+- Employee count by department.
+- Average salary by department.
+- Total revenue by department.
+- Revenue per employee.
+
+Example:
+
+```python
+result = df.groupby("Department").agg(
+    Total_Revenue=("Revenue", "sum"),
+    Employee_Count=("Employee", "count")
+)
+
+result["Revenue_Per_Employee"] = (
+    result["Total_Revenue"] / result["Employee_Count"]
+)
+
+print(result.sort_values(
+    "Revenue_Per_Employee",
+    ascending=False
+))
+```
+
+This analysis helps compare department performance using revenue generated per employee.
+
+## 6. Project Structure
+
+```text
+Python-Data-Analytics/
+│
+├── NumPy/
+│   └── numpy1.py
+│
+├── Pandas/
+│   ├── panda.py
+│   ├── pandas1.py
+│   ├── pandas2.py
+│   ├── pandas3.py
+│   ├── pandas4.py
+│   ├── adv_pandas.py
+│   ├── data_manipulation.py
+│   ├── DM2.py
+│   └── groupby.py
+│
+├── Data/
+│   ├── emp.json
+│   ├── employees.json
+│   ├── employees_cleaned.csv
+│   └── output.json
+│
+├── Reports/
+│   ├── report.xlsx
+│   └── business_report.xlsx
+│
+└── README.md
+```
+
+## 7. Installation and Setup
+
+### Step 1: Install Python
+
+Download Python:
+
+https://www.python.org/downloads/
+
+### Step 2: Install Required Libraries
+
+```bash
+pip install numpy pandas openpyxl
+```
+
+### Step 3: Clone the Repository
+
+```bash
+git clone https://github.com/your-username/Python-Data-Analytics.git
+```
+
+### Step 4: Navigate to the Project Folder
+
+```bash
+cd Python-Data-Analytics
+```
+
+### Step 5: Run a Python File
+
+```bash
+python numpy1.py
+```
+
+You can also run individual Pandas exercise files.
+
+## 8. Skills Demonstrated
+
+- Python Programming
+- NumPy
+- Pandas
+- Data Cleaning
+- Data Manipulation
+- Data Transformation
+- Data Aggregation
+- Exploratory Data Analysis Fundamentals
+- Statistical Calculations
+- Date and Time Processing
+- CSV and JSON Processing
+- Excel Report Automation
+- Business Data Analysis
+
+## 9. Learning Outcome
+
+Through these practical exercises, I developed an understanding of how Python libraries can be used to process structured data, perform calculations, clean datasets, combine multiple sources, generate analytical summaries, and automate reporting tasks.
+
+These concepts form an important foundation for performing real-world Data Analyst responsibilities.
+
+---
+
+**Project:** Python & Pandas for Data Analytics  
+**Language:** Python  
+**Libraries:** NumPy, Pandas  
+**File Formats:** CSV, JSON, Excel  
+**Focus:** Data Cleaning, Data Manipulation, Data Analysis & Reporting
